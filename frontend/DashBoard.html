@@ -255,7 +255,7 @@ body{
 let data = [];
 
 async function loadData() {
-  const res = await fetch("http://127.0.0.1:5000/api/alerts");
+  const res = await fetch("https://sos-backend-c95v.onrender.com//api/alerts");
   data = await res.json();
   render(data);
 }
