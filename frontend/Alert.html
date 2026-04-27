@@ -45,7 +45,7 @@ let alerts = [];
 let current = "all";
 
 async function fetchAlerts(){
-  const res = await fetch("https://sos-backend-c95v.onrender.com//api/alerts");
+  const res = await fetch("https://sos-backend-c95v.onrender.com/api/alerts");
   alerts = await res.json();
   render();
 }
