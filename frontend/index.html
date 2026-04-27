@@ -146,7 +146,7 @@ async function sendSOS() {
     return;
   }
 
-  const response = await fetch("http://127.0.0.1:5000/api/alert", {
+  const response = await fetch("https://sos-backend-c95v.onrender.com/api/alert", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
