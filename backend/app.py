@@ -52,9 +52,3 @@ def accept(name):
     update_alert(name, "accepted")
     return {"message": "Alert accepted"}
 
-# 🔹 Resolve alert
-@app.route('/api/resolve/<name>', methods=['PUT'])
-def resolve(name):
-    from models.alert_model import update_alert
-    update_alert(name, "resolved")
-    return {"message": "Alert resolved"}
