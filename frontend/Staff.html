@@ -132,7 +132,7 @@ footer {
 let alerts = [];
 
 async function fetchAlerts(){
-  const res = await fetch("http://127.0.0.1:5000/api/alerts");
+  const res = await fetch("https://sos-backend-c95v.onrender.com/api/alerts");
   alerts = await res.json();
 
   render(alerts);
@@ -193,7 +193,7 @@ function getColor(level){
 
 // 🔹 Accept
 async function acceptAlert(name){
-  await fetch(`http://127.0.0.1:5000/api/accept/${name}`, {
+  await fetch(`https://sos-backend-c95v.onrender.com/api/accept/${name}`, {
     method: "PUT"
   });
   fetchAlerts();
@@ -201,7 +201,7 @@ async function acceptAlert(name){
 
 // 🔹 Resolve
 async function resolveAlert(name){
-  await fetch(`http://127.0.0.1:5000/api/resolve/${name}`, {
+  await fetch(`https://sos-backend-c95v.onrender.com/api/resolve/${name}`, {
     method: "PUT"
   });
   fetchAlerts();
