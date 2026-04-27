@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reports - HelpBridge</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  background:#f4f7ff;
+  padding:20px;
+}
+
+/* HEADER */
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.search{
+  padding:10px;
+  width:250px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+/* FILTER */
+.filters button{
+  padding:8px 15px;
+  margin:5px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  background:#e5e7eb;
+}
+
+.filters button:hover{
+  background:#6366f1;
+  color:#fff;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+}
+
+/* CARD */
+.card{
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+/* TEXT */
+.small{
+  font-size:13px;
+  color:#555;
+}
+
+/* STATUS */
+.status{
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-block;
+  margin-top:10px;
+}
+
+.completed{background:#dcfce7;color:#065f46;}
+.pending{background:#fef3c7;color:#92400e;}
+.failed{background:#fee2e2;color:#b91c1c;}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>📊 Reports & Analytics</h2>
+  <input type="text" class="search" placeholder="Search reports..." onkeyup="searchReports(this.value)">
+</div>
+
+<div class="filters">
+  <button onclick="filterReports('all')">All</button>
+  <button onclick="filterReports('completed')">Completed</button>
+  <button onclick="filterReports('pending')">Pending</button>
+  <button onclick="filterReports('failed')">Failed</button>
+</div>
+
+<div id="reportList" class="grid"></div>
+
+<script>
+
+/* DATA */
+const reports = [
+{
+title:'Monthly Emergency Report',
+date:'March 2026',
+type:'Monthly',
+alerts:128,
+responseTime:'4.5 min avg',
+success:'96%',
+status:'completed',
+desc:'This report provides a comprehensive overview of all emergency alerts handled during the month. It includes response times, success rates, and analysis of high-priority incidents. The system maintained high efficiency with minimal delays and strong coordination between users and responders.'
+},
+{
+title:'Daily Incident Log',
+date:'Today',
+type:'Daily',
+alerts:12,
+responseTime:'3.2 min avg',
+success:'92%',
+status:'pending',
+desc:'Daily log of all incidents recorded today including fire alerts, accidents, and SOS triggers. Some cases are still under review and awaiting final closure confirmation.'
+},
+{
+title:'System Failure Report',
+date:'Last Week',
+type:'System',
+alerts:5,
+responseTime:'N/A',
+success:'70%',
+status:'failed',
+desc:'This report analyzes system performance issues encountered last week including server overload and delayed notifications. Improvements are required to ensure stability under high traffic conditions.'
+}
+];
+
+let current='all';
+
+/* DISPLAY */
+function displayReports(){
+  const list=document.getElementById('reportList');
+  list.innerHTML='';
+
+  reports
+    .filter(r=>current==='all'||r.status===current)
+    .forEach(r=>{
+      list.innerHTML+=`
+      <div class="card">
+        <h3>${r.title}</h3>
+
+        <div class="small"><b>📅 Date:</b> ${r.date}</div>
+        <div class="small"><b>📂 Type:</b> ${r.type}</div>
+        <div class="small"><b>🚨 Total Alerts:</b> ${r.alerts}</div>
+        <div class="small"><b>⏱ Avg Response:</b> ${r.responseTime}</div>
+        <div class="small"><b>📊 Success Rate:</b> ${r.success}</div>
+
+        <p class="small" style="margin-top:10px;">
+          ${r.desc}
+        </p>
+
+        <div class="status ${r.status}">
+          ${r.status.toUpperCase()}
+        </div>
+      </div>
+      `;
+    });
+}
+
+/* FILTER */
+function filterReports(type){
+  current=type;
+  displayReports();
+}
+
+/* SEARCH */
+function searchReports(text){
+  const cards=document.querySelectorAll('.card');
+  cards.forEach(c=>{
+    c.style.display = c.innerText.toLowerCase().includes(text.toLowerCase()) ? 'block':'none';
+  });
+}
+
+displayReports();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emerge SOS System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- LEFT SIDEBAR -->
+<div class="sidebar-left">
+  <h2>Emerge</h2>
+  <p class="tagline">Your Safety, Our Priority</p>
+
+  <ul>
+  <li><a href="DashBoard.html">🏠 Live Dashboard</a></li>
+  <li><a href="Aboutus.html">ℹ About Us</a></li>
+  <li><a href="SafetyPrecautions.html">🛡 Precautions</a></li>
+</ul>
+
+  <div class="info-box">
+    <p>
+      Emerge is designed to provide instant emergency assistance.
+      This system ensures your safety by sending real-time alerts,
+      sharing your live location, and notifying responsible authorities.
+    </p>
+  </div>
+</div>
+
+<!-- RIGHT SIDEBAR -->
+<div class="sidebar-right">
+  <h3>Control Panel</h3>
+<a href="Admin.html" class="panel-link">
+  <div class="panel-box">
+    <p><b>👨‍💼 Admin</b></p>
+    <p>Monitor all alerts</p>
+  </div>
+</a>
+  <a href="Staff.html" class="panel-link">
+  <div class="panel-box">
+    <p><b>👷 Staff</b></p>
+    <p>Respond to emergencies</p>
+  </div>
+</a>
+<a href="Reports.html" class="panel-link">
+  <div class="panel-box">
+    <p><b>📊 Reports</b></p>
+    <p>View system analytics</p>
+  </div>
+</div>
+</body>
+</a>
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <h1>🚨 SOS Emergency Signal System</h1>
+  <p class="subtitle">
+    Fill the details below and instantly send your emergency alert to nearby responders.
+  </p>
+
+  <!-- FORM -->
+  <div class="form-box">
+
+    <h2>Emergency Details</h2>
+
+    <label>Your Name</label>
+    <input type="text" id="name" placeholder="Enter full name">
+
+    <label>Location / Area</label>
+    <input type="text" id="area" placeholder="Enter your current area">
+
+    <label>Emergency Type</label>
+    <select id="type">
+      <option>Choose Type</option>
+      <option>Medical Emergency</option>
+      <option>Fire Accident</option>
+      <option>Security Threat</option>
+    </select>
+
+    <label>Room / Block Number</label>
+    <input type="text" id="room" placeholder="Optional">
+
+    <label>Alert Severity Level</label>
+    <select id="level">
+      <option>Select Level</option>
+      <option>High - Immediate Danger</option>
+      <option>Medium - Needs Attention</option>
+      <option>Low - Minor Issue</option>
+    </select>
+
+    <!-- LOCATION -->
+    <div class="location-box">
+      <h3>📍 Live Location Tracking</h3>
+      <p id="locationText">Detecting your location...</p>
+      <a id="mapLink" target="_blank">View on Map</a>
+    </div>
+
+    <!-- SOS BUTTON -->
+    <button class="sos-btn" onclick="sendSOS()">🚨 SEND SOS ALERT</button>
+
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="timeline-box">
+    <h2>📜 Activity Timeline</h2>
+    <ul id="timeline">
+      <li>System initialized and ready</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- JAVASCRIPT INSIDE HTML -->
+<script>
+window.onload = function () {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      let lat = pos.coords.latitude;
+      let lon = pos.coords.longitude;
+
+      document.getElementById("locationText").innerText =
+        "Latitude: " + lat + " | Longitude: " + lon;
+
+      document.getElementById("mapLink").href =
+        "https://www.google.com/maps?q=" + lat + "," + lon;
+
+      addLog("📍 Location detected successfully");
+    }, () => {
+      document.getElementById("locationText").innerText =
+        "Location access denied";
+    });
+  }
+};
+async function sendSOS() {
+  let name = document.getElementById("name").value;
+  let area = document.getElementById("area").value;
+  let type = document.getElementById("type").value;
+  let room = document.getElementById("room").value;
+  let level = document.getElementById("level").value;
+
+  let locationText = document.getElementById("locationText").innerText;
+
+  if (!name || !area || type === "Choose Type" || level === "Select Level") {
+    alert("⚠ Please complete all required fields!");
+    return;
+  }
+
+  const response = await fetch("http://127.0.0.1:5000/api/alert", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name,
+      area,
+      type,
+      room,
+      level,
+      location: locationText
+    })
+  });
+
+  const data = await response.json();
+
+  alert(data.message);
+}
+
+function addLog(text) {
+  let li = document.createElement("li");
+  li.innerText = text;
+  document.getElementById("timeline").appendChild(li);
+}
+</script>
+
+</body>
+</html>

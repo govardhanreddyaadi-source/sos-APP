@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Alerts</title>
+
+<style>
+body {font-family: Arial; background:#f4f8ff;}
+
+.top {
+  text-align:center;
+  padding:10px;
+}
+
+button {
+  margin:5px;
+  padding:8px 12px;
+}
+
+.container {padding:20px;}
+
+.card {
+  background:white;
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top">
+  <h2>🚨 Alerts</h2>
+  <button onclick="filter('all')">All</button>
+  <button onclick="filter('active')">Active</button>
+  <button onclick="filter('accepted')">Accepted</button>
+  <button onclick="filter('resolved')">Resolved</button>
+</div>
+
+<div class="container" id="alerts"></div>
+
+<script>
+
+let alerts = [];
+let current = "all";
+
+async function fetchAlerts(){
+  const res = await fetch("http://127.0.0.1:5000/api/alerts");
+  alerts = await res.json();
+  render();
+}
+
+function render(){
+  const container = document.getElementById("alerts");
+  container.innerHTML = "";
+
+  alerts
+    .filter(a => current === "all" || a.status === current)
+    .forEach(a=>{
+      container.innerHTML += `
+        <div class="card">
+          <h3>${a.type}</h3>
+          <p>User: ${a.name}</p>
+          <p>Location: ${a.area}</p>
+          <p>Status: ${a.status}</p>
+        </div>
+      `;
+    });
+}
+
+function filter(type){
+  current = type;
+  render();
+}
+
+setInterval(fetchAlerts, 5000);
+fetchAlerts();
+
+</script>
+
+</body>
+</html>

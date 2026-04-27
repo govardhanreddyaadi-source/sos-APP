@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f8ff;
+}
+
+/* LOGIN SCREEN */
+.login {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.login-box {
+  background:white;
+  padding:30px;
+  border-radius:15px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.1);
+  text-align:center;
+}
+
+.login-box input {
+  display:block;
+  width:200px;
+  margin:10px auto;
+  padding:10px;
+}
+
+.login-box button {
+  padding:10px 20px;
+  background:#42a5f5;
+  border:none;
+  color:white;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* DASHBOARD */
+.dashboard { display:none; }
+
+header {
+  background: linear-gradient(135deg, #42a5f5, #90caf9);
+  padding: 20px;
+  text-align: center;
+  color: white;
+  font-size: 24px;
+}
+
+.stats {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+  padding:20px;
+}
+
+.stat-box {
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  text-align:center;
+}
+
+.stat-box h2 { color:#42a5f5; }
+
+.container {
+  padding:20px;
+}
+
+.card {
+  background:white;
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:10px;
+}
+
+button {
+  padding:6px 10px;
+  background:#42a5f5;
+  border:none;
+  color:white;
+  border-radius:6px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔐 LOGIN -->
+<div class="login" id="loginPage">
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+<header>⚙️ ADMIN PANEL</header>
+
+<div class="stats">
+  <div class="stat-box">
+    <h2 id="total">0</h2>
+    <p>Total</p>
+  </div>
+  <div class="stat-box">
+    <h2 id="active">0</h2>
+    <p>Active</p>
+  </div>
+  <div class="stat-box">
+    <h2 id="resolved">0</h2>
+    <p>Resolved</p>
+  </div>
+</div>
+
+<div class="container">
+  <h2>🚨 Alerts</h2>
+  <div id="alerts"></div>
+</div>
+
+</div>
+
+<script>
+
+let alerts = [];
+
+// 🔐 LOGIN FUNCTION
+function login(){
+  const user = document.getElementById("username").value;
+  const pass = document.getElementById("password").value;
+
+  if(user === "admin" && pass === "1234"){
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("dashboard").style.display="block";
+    fetchData();
+  } else {
+    document.getElementById("error").innerText="Invalid credentials";
+  }
+}
+
+// 🔹 FETCH DATA
+async function fetchData(){
+  const res = await fetch("http://127.0.0.1:5000/api/alerts");
+  alerts = await res.json();
+
+  render(alerts);
+  updateCounts(alerts);   // ✅ FIXED COUNTS
+}
+
+// 🔹 RENDER ALERTS
+function render(list){
+  const container = document.getElementById("alerts");
+  container.innerHTML = "";
+
+  list.forEach(a=>{
+    container.innerHTML += `
+      <div class="card">
+        <h3>${a.type}</h3>
+        <p>User: ${a.name}</p>
+        <p>Location: ${a.area}</p>
+        <p>Status: ${a.status}</p>
+
+        ${
+          a.status === "active"
+          ? `<button onclick="resolveAlert('${a.name}')">Resolve</button>`
+          : `<span style="color:green">✔ Done</span>`
+        }
+      </div>
+    `;
+  });
+}
+
+// 🔹 UPDATE COUNTS (FIX)
+function updateCounts(data){
+  document.getElementById("total").innerText = data.length;
+
+  document.getElementById("active").innerText =
+    data.filter(a => a.status === "active").length;
+
+  document.getElementById("resolved").innerText =
+    data.filter(a => a.status === "resolved").length;
+}
+
+// 🔹 RESOLVE
+async function resolveAlert(name){
+  await fetch(`http://127.0.0.1:5000/api/resolve/${name}`, {
+    method: "PUT"
+  });
+  fetchData();
+}
+
+// 🔁 AUTO REFRESH
+setInterval(fetchData, 5000);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Users</title>
+<style>
+body {font-family: Arial; background:#f4f8ff;}
+.container {padding:20px;}
+.card {
+  background:white;
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center">👥 Users (Alert Senders)</h2>
+<div class="container" id="users"></div>
+
+<script>
+let alerts = [];
+
+async function fetchUsers(){
+  const res = await fetch("http://127.0.0.1:5000/api/alerts");
+  alerts = await res.json();
+
+  // ✅ extract unique users
+  const usersMap = {};
+
+  alerts.forEach(a => {
+    if(!usersMap[a.name]){
+      usersMap[a.name] = {
+        name: a.name,
+        area: a.area,
+        total: 0
+      };
+    }
+    usersMap[a.name].total++;
+  });
+
+  render(Object.values(usersMap));
+}
+
+function render(users){
+  const container = document.getElementById("users");
+  container.innerHTML = "";
+
+  users.forEach(u=>{
+    container.innerHTML += `
+      <div class="card">
+        <h3>${u.name}</h3>
+        <p>📍 ${u.area}</p>
+        <p>🚨 Alerts Sent: ${u.total}</p>
+      </div>
+    `;
+  });
+}
+
+setInterval(fetchUsers, 5000);
+fetchUsers();
+</script>
+
+</body>
+</html>
