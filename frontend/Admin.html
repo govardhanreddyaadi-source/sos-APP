@@ -152,7 +152,7 @@ function login(){
 
 // 🔹 FETCH DATA
 async function fetchData(){
-  const res = await fetch("https://sos-backend-c95v.onrender.com//api/alerts");
+  const res = await fetch("https://sos-backend-c95v.onrender.com/api/alerts");
   alerts = await res.json();
 
   render(alerts);
@@ -195,7 +195,7 @@ function updateCounts(data){
 
 // 🔹 RESOLVE
 async function resolveAlert(name){
-  await fetch(`https://sos-backend-c95v.onrender.com//api/resolve/${name}`, {
+  await fetch(`https://sos-backend-c95v.onrender.com/api/resolve/${name}`, {
     method: "PUT"
   });
   fetchData();
