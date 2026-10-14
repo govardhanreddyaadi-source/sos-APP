@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-from models.alert_model import create_alert, get_alerts, update_alert
-from models.user_model import get_users
+from backend.models.alert_model import create_alert, get_alerts, update_alert
+from backend.models.user_model import get_users
 
 app = Flask(__name__)
 CORS(app)
